@@ -7,6 +7,13 @@ import reportWebVitals from './reportWebVitals';
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// mock API server
+import { makeServer } from "./api/server"
+if (process.env.NODE_ENV === "development") {
+  makeServer({ environment: "development" })
+}
+
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
