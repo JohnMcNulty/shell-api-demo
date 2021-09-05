@@ -24,10 +24,16 @@ const EnergyMain = () => {
   useEffect(() => {
     if (activeRequest) {
       fetch(`/api/${activeRequest.value}`)
-        .then((res) => res.json())
+        .then((res) => {
+          console.log(res)
+          return res.json()
+        })
         .then((json) => {
           setChartData(json);
         })
+        .catch((error) => {
+          console.log(error)
+        });
     }
   }, [activeRequest])
 
