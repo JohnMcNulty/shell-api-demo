@@ -8,60 +8,31 @@ const EnergyChart = (props) => {
 
     const { activeRequest, chartData } = props;
 
-    /* Chart data build functions */
-    const buildMeterChart = (data) => {
-        let xAxis = data.meter
-            .sort((a, b) => (a.meterCode > b.meterCode) ? 1 : -1)
-            .map(item => `[${item.meterCode}]`);
-
-        const min = data.meter.map(item => item.valueMinimum);
-        const max = data.meter.map(item => item.valueMaximum);
-        const med = data.meter.map(item => item.valueMedian);
-
-        const traceMin = { x: xAxis, y: min, type: 'bar', name: 'minimum value' }
-        const traceMax = { x: xAxis, y: max, type: 'bar', name: 'maximum value' }
-        const traceMed = { x: xAxis, y: med, type: 'bar', name: 'median value' }
-
-        const graph = [traceMin, traceMax, traceMed]
-        setGraphData(graph);
-
-        return graph;
-    }
-
-    const buildEnergyTypeChart = (data) => {
-        let xAxis = data.energyType
-            .sort((a, b) => (a.energyDataType > b.energyDataType) ? 1 : -1)
-            .map(item => item.energyDataType);
-
-        const min = data.energyType.map(item => item.valueMinimum);
-        const max = data.energyType.map(item => item.valueMaximum);
-        const med = data.energyType.map(item => item.valueMedian);
-
-        const traceMin = { x: xAxis, y: min, type: 'bar', name: 'minimum value' }
-        const traceMax = { x: xAxis, y: max, type: 'bar', name: 'maximum value' }
-        const traceMed = { x: xAxis, y: med, type: 'bar', name: 'median value' }
-
-        const graph = [traceMin, traceMax, traceMed]
-        setGraphData(graph);
-
-        return graph;
-    }
-
-    const buildDateChart = (data) => {
-
-        const xAxis = data.date
-            .sort((a, b) => (a.recordDate > b.recordDate) ? 1 : -1)
+    /* Chart data build function */
+    /*
+        data - chart data (from mock api)
+        propName - the xAxis property i.e. energyDataType, recordDate or meterCode
+        chartType - plotly chart type e.g. bar or scatter
+        fnFormatLabel - optional function to format the xAxis label
+    */
+    const buildChart = (data, propName, chartType, fnFormatLabel) => {
+        let xAxis = data
+            .sort((a, b) => (a[propName] > b[propName]) ? 1 : -1)
             .map(item => {
-                return moment(item.recordDate, 'YYYYMMDD', true).format("DD MMM YY"); // format to friendly style
+                if (fnFormatLabel) {
+                    return fnFormatLabel(item[propName])
+                }
+
+                return item[propName]
             });
 
-        const min = data.date.map(item => item.valueMinimum);
-        const max = data.date.map(item => item.valueMaximum);
-        const med = data.date.map(item => item.valueMedian);
+        const min = data.map(item => item.valueMinimum);
+        const max = data.map(item => item.valueMaximum);
+        const med = data.map(item => item.valueMedian);
 
-        const traceMin = { x: xAxis, y: min, type: 'scatter', name: 'minimum value' }
-        const traceMax = { x: xAxis, y: max, type: 'scatter', name: 'maximum value' }
-        const traceMed = { x: xAxis, y: med, type: 'scatter', name: 'median value' }
+        const traceMin = { x: xAxis, y: min, type: chartType, name: 'minimum value' }
+        const traceMax = { x: xAxis, y: max, type: chartType, name: 'maximum value' }
+        const traceMed = { x: xAxis, y: med, type: chartType, name: 'median value' }
 
         const graph = [traceMin, traceMax, traceMed]
         setGraphData(graph);
@@ -77,13 +48,13 @@ const EnergyChart = (props) => {
         }
 
         if (activeRequest.value === 'date') {
-            buildDateChart(chartData)
+            buildChart(chartData.date, 'recordDate', 'scatter', (dt) => moment(dt, 'YYYYMMDD', true).format("D-MMM-YY"));
         }
         if (activeRequest.value === 'meter') {
-            buildMeterChart(chartData)
+            buildChart(chartData.meter, 'meterCode', 'bar', (meterCode) => `[${meterCode}]`);
         }
         if (activeRequest.value === 'energyType') {
-            buildEnergyTypeChart(chartData)
+            buildChart(chartData.energyType, 'energyDataType', 'bar');
         }
     }, [chartData])
 
