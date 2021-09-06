@@ -94,6 +94,8 @@ Contains main 'connected' component (`EnergyMain`), calls API passes & props to 
 
 Created a dotnet core API with standard Service-Orientated-Architecture containing Service and Repository layers. 
 
+Postman collection for localhost API testing is [here](https://github.com/JohnMcNulty/Shell-API-dotnet-core-service/blob/master/Shell%20API.postman_collection.json).
+
 
 ### Data Layer
 
