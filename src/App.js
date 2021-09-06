@@ -1,6 +1,6 @@
-import './App.css';
+import "./App.css";
 
-import EnergyMain from './components/EnergyMain';
+import EnergyMain from "./components/EnergyMain";
 
 function App() {
   return (
